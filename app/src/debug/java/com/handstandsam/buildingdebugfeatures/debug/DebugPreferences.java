@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 public class DebugPreferences {
 
     public static final String MOCK_MODE = "mock_mode";
+    public static final String BASE_URL = "base_url";
     public static final String CHUCK = "chuck";
 
     private final SharedPreferences sharedPreferences;
@@ -33,4 +34,11 @@ public class DebugPreferences {
         sharedPreferences.edit().putBoolean(CHUCK, enabled).apply();
     }
 
+    public void setBaseUrl(String baseUrl) {
+        sharedPreferences.edit().putString(BASE_URL, baseUrl).apply();
+    }
+
+    public String getBaseUrl() {
+        return sharedPreferences.getString(BASE_URL, "https://api.github.com/");
+    }
 }

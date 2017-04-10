@@ -1,5 +1,15 @@
 package com.handstandsam.buildingdebugfeatures;
 
+import static com.handstandsam.buildingdebugfeatures.utils.IntentUtils.getIntentForUsername;
+
+import javax.inject.Inject;
+
+import com.handstandsam.buildingdebugfeatures.debug.DebugPreferences;
+import com.handstandsam.buildingdebugfeatures.debug.HomeScreenShortcutBuilder;
+import com.handstandsam.buildingdebugfeatures.network.GitHubService;
+import com.handstandsam.buildingdebugfeatures.utils.IntentUtils;
+import com.jakewharton.processphoenix.ProcessPhoenix;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,18 +19,8 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import com.handstandsam.buildingdebugfeatures.debug.DebugPreferences;
-import com.handstandsam.buildingdebugfeatures.debug.HomeScreenShortcutBuilder;
-import com.handstandsam.buildingdebugfeatures.network.GitHubService;
-import com.handstandsam.buildingdebugfeatures.utils.IntentUtils;
-import com.jakewharton.processphoenix.ProcessPhoenix;
-
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.handstandsam.buildingdebugfeatures.utils.IntentUtils.getIntentForUsername;
 
 public class DebugActivity extends AppCompatActivity {
 
@@ -42,6 +42,8 @@ public class DebugActivity extends AppCompatActivity {
     @BindView(R.id.username)
     AppCompatEditText usernameEditText;
 
+    @BindView(R.id.baseurl)
+    AppCompatEditText baseUrlEditText;
 
     @BindView(R.id.add_shortcut)
     AppCompatButton addShortcutButton;
@@ -76,6 +78,10 @@ public class DebugActivity extends AppCompatActivity {
         applyChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String altEndpoint = baseUrlEditText.getText().toString();
+                if (altEndpoint != null && altEndpoint.length() > 0) {
+                    debugPreferences.setBaseUrl(altEndpoint);
+                }
                 ProcessPhoenix.triggerRebirth(DebugActivity.this);
             }
         });

@@ -1,9 +1,6 @@
 package com.handstandsam.buildingdebugfeatures;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.StrictMode;
-import android.widget.Toast;
+import java.io.IOException;
 
 import com.handstandsam.buildingdebugfeatures.debug.DebugDispatcher;
 import com.handstandsam.buildingdebugfeatures.debug.DebugPreferences;
@@ -12,7 +9,10 @@ import com.handstandsam.buildingdebugfeatures.di.AppModule;
 import com.handstandsam.buildingdebugfeatures.di.DaggerAppComponent;
 import com.handstandsam.buildingdebugfeatures.di.DebugNetworkModule;
 
-import java.io.IOException;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.StrictMode;
+import android.widget.Toast;
 
 import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
@@ -20,7 +20,6 @@ import timber.log.Timber;
 public class MyApplication extends MyAbstractApplication {
 
     public static MockWebServer server;
-
 
     @Override
     public void onCreate() {
@@ -35,7 +34,8 @@ public class MyApplication extends MyAbstractApplication {
         }
 
         try {
-            //Have to do this to start the server synchronously on the main thread (not recommended, but this is a debug feature)
+            // Have to do this to start the server synchronously on the main thread (not recommended, but this is a
+            // debug feature)
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             server = new MockWebServer();
@@ -47,10 +47,14 @@ public class MyApplication extends MyAbstractApplication {
         }
     }
 
-
     @Override
     protected AppComponent createAppComponent() {
         String endpoint = "https://api.github.com/";
+
+        DebugPreferences debugPreferences = new DebugPreferences(this);
+        if (debugPreferences.getBaseUrl() != null && debugPreferences.getBaseUrl().length() > 0) {
+            endpoint = debugPreferences.getBaseUrl();
+        }
         if (new DebugPreferences(this).isMockMode()) {
             startMockWebServer();
             endpoint = server.url("/").toString();
@@ -62,10 +66,8 @@ public class MyApplication extends MyAbstractApplication {
             });
         }
 
-        return DaggerAppComponent.builder()
-                .appModule(new AppModule(this))
-                .networkModule(new DebugNetworkModule(endpoint))
-                .build();
+        return DaggerAppComponent.builder().appModule(new AppModule(this))
+                .networkModule(new DebugNetworkModule(endpoint)).build();
     }
 
 }

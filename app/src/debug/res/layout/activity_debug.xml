@@ -35,6 +35,13 @@
             android:text="Chuck" />
     </LinearLayout>
 
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/baseurl"
+        android:layout_width="match_parent"
+        android:imeOptions="actionDone"
+        android:layout_height="wrap_content"
+        android:hint='Base Url'/>
+
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/apply_changes"
         android:layout_width="wrap_content"
