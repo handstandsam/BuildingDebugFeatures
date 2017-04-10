@@ -47,13 +47,23 @@ public class MyApplication extends MyAbstractApplication {
         }
     }
 
+    public static final String DEFAULT_BASE_URL = "https://api.github.com/";
+
     @Override
     protected AppComponent createAppComponent() {
-        String endpoint = "https://api.github.com/";
+        String endpoint = DEFAULT_BASE_URL;
 
         DebugPreferences debugPreferences = new DebugPreferences(this);
-        if (debugPreferences.getBaseUrl() != null && debugPreferences.getBaseUrl().length() > 0) {
-            endpoint = debugPreferences.getBaseUrl();
+        final String debugUrl = debugPreferences.getBaseUrl();
+        if (debugUrl != null && debugUrl.length() > 0 && !debugUrl.equals(DEFAULT_BASE_URL)) {
+            endpoint = debugUrl;
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MyApplication.this, "Using Alternate Endpoint: " + debugUrl, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
         }
         if (new DebugPreferences(this).isMockMode()) {
             startMockWebServer();
